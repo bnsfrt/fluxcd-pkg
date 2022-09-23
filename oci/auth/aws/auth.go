@@ -34,6 +34,7 @@ import (
 )
 
 var registryPartRe = regexp.MustCompile(`([0-9+]*).dkr.ecr.([^/.]*)\.(amazonaws\.com[.cn]*)/([^:]+):?(.*)`)
+var registryPartReNoRepo = regexp.MustCompile(`([0-9+]*).dkr.ecr.([^/.]*)\.(amazonaws\.com[.cn]*)`)
 
 // ParseImage returns the AWS account ID and region and `true` if
 // the image repository is hosted in AWS's Elastic Container Registry,
@@ -41,7 +42,10 @@ var registryPartRe = regexp.MustCompile(`([0-9+]*).dkr.ecr.([^/.]*)\.(amazonaws\
 func ParseImage(image string) (accountId, awsEcrRegion string, ok bool) {
 	registryParts := registryPartRe.FindAllStringSubmatch(image, -1)
 	if len(registryParts) < 1 || len(registryParts[0]) < 3 {
-		return "", "", false
+		registryParts = registryPartReNoRepo.FindAllStringSubmatch(image, -1)
+		if len(registryParts) < 1 || len(registryParts[0]) < 3 {
+			return "", "", false
+		}
 	}
 	return registryParts[0][1], registryParts[0][2], true
 }
