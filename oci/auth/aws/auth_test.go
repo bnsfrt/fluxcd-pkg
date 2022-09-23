@@ -51,8 +51,10 @@ func TestParseImage(t *testing.T) {
 			wantOK:        true,
 		},
 		{
-			image:  "012345678901.dkr.ecr.us-east-1.amazonaws.com",
-			wantOK: false,
+			image:         "012345678901.dkr.ecr.us-east-1.amazonaws.com",
+			wantAccountID: "012345678901",
+			wantRegion:    "us-east-1",
+			wantOK:        true,
 		},
 		{
 			image:  "gcr.io/foo/bar:baz",
